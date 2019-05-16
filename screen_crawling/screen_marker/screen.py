@@ -1,20 +1,23 @@
-import time
+""" Module for make dataset using selenium.
+ScreenCrawler generate raw and marked images and store in dataset folder.
+"""
 import uuid
 
-from selenium import webdriver
 from contextlib import contextmanager
+from selenium import webdriver
 
 from .data_loader import load_data
 
 
 def init_driver():
-    DRIVER = "chromedriver"
-    driver = webdriver.Chrome(DRIVER)
+    """ Init and return selenium driver with fullscreen window. """
+    driver = webdriver.Chrome("chromedriver")
     driver.fullscreen_window()
     return driver
 
 
 def is_success(script_result):
+    """ Check screep result from driver.execute_script """
     if not script_result:
         return True
     print(script_result)
@@ -22,6 +25,8 @@ def is_success(script_result):
 
 
 class ScreenCrawler:
+    """ Make screenshots and mark by selector. """
+
     def __init__(self, driver, dirname, destroy_selectors=None, hide_selectors=None):
         self._driver = driver
         self._dirname = dirname
@@ -30,9 +35,9 @@ class ScreenCrawler:
 
     def _execute_script_for_classes(self, html_selectors, raw_script):
         if self._destroy_selectors:
-            for el_to_hide in html_selectors:
-                for el in self._driver.find_elements_by_class_name(el_to_hide):
-                    is_success(self._driver.execute_script(raw_script, el))
+            for html_selector in html_selectors:
+                for found_element in self._driver.find_elements_by_class_name(html_selector):
+                    is_success(self._driver.execute_script(raw_script, found_element))
 
     def _destroy_trash(self):
         self._execute_script_for_classes(
@@ -45,12 +50,15 @@ class ScreenCrawler:
         )
 
     def _mark_class_element(self, class_name, color):
-        for el in self._driver.find_elements_by_class_name(class_name):
+        for found_element in self._driver.find_elements_by_class_name(class_name):
             is_success(
-                self._driver.execute_script("arguments[0].style.background='red'", el)
+                self._driver.execute_script(
+                    f"arguments[0].style.background='{color}'", found_element
+                )
             )
 
-    def _screen(self, postfix_mark):
+    def screen(self, postfix_mark):
+        """ Maker screen and save to `_dirname` current position window of page. """
         self._driver.save_screenshot(
             f"{self._dirname}/{uuid.uuid4()}-{postfix_mark}.png"
         )
@@ -63,6 +71,7 @@ class ScreenCrawler:
         self._driver.save_screenshot(f"{filename}-marked.png")
 
     def run(self, html_mark_selector, color="red"):
+        """ Start crawler page and mark elements by `html_mark_selector`"""
         self._destroy_trash()
         self._hide_trash()
         with self._save_example():
@@ -70,6 +79,7 @@ class ScreenCrawler:
 
 
 def crawl(driver, page_data):
+    """ Crawl using driver and page data. """
     driver.get(page_data.url)
     crawler = ScreenCrawler(
         driver, "dataset", page_data.destroy_classes, page_data.hide_classes
@@ -78,9 +88,10 @@ def crawl(driver, page_data):
 
 
 def run():
+    """ Main method for running screen_maker module """
     driver = init_driver()
     try:
-        data = load_data('tools/urls.data')
+        data = load_data("tools/urls.data")
         for page_data in data:
             crawl(driver, page_data)
     except Exception as ex:
