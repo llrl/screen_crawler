@@ -1,3 +1,4 @@
+""" Utils for load data from json format and transform to PageData. """
 from collections import namedtuple
 from json import loads
 
@@ -8,5 +9,6 @@ PageData = namedtuple(
 
 
 def load_data(filename):
+    """ Load PageData from json nextline separate examples """
     with open(filename, "rt") as file:
         return [PageData(**loads(raw)) for raw in file.readlines()]

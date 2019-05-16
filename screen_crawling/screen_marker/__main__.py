@@ -1,5 +1,4 @@
-
-
+""" Entry point """
 from .screen import run
 
 
