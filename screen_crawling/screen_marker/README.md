@@ -1,3 +1,9 @@
+# TODO
+
+1) Refactoring
+2) Model for dataset and contoring panel for better work with sceen_marker
+
+
 ## Good selectors for sites
 
 ## Train data
