@@ -5,6 +5,7 @@ import uuid
 
 from contextlib import contextmanager
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from .data_loader import load_data
 
@@ -65,18 +66,54 @@ class ScreenCrawler:
 
     @contextmanager
     def _save_example(self):
-        filename = f"{self._dirname}/{uuid.uuid4()}"
-        self._driver.save_screenshot(f"{filename}-raw.png")
+        filename = f"{uuid.uuid4()}"
+        with open(f'{self._dirname}/info.txt', 'a') as f:
+            f.write(f'{filename}.png\n')
+        self._driver.save_screenshot(f"{self._dirname}/raw/{filename}.png")
         yield None
-        self._driver.save_screenshot(f"{filename}-marked.png")
+        self._driver.save_screenshot(f"{self._dirname}/marked/{filename}.png")
 
-    def run(self, html_mark_selector, color="red"):
+    def _fix_size(self, el, w, h):
+        self._driver.execute_script(
+                    f"arguments[0].style.width='{w}'", el
+                )
+        self._driver.execute_script(
+                    f"arguments[0].style.height='{h}'", el
+                )
+
+    def _clear_example_element(self, el, classes_to_hide):
+        """ main-goods__picture """
+        for el_to_hide in classes_to_hide:
+            found_el = el.find_element_by_class_name(el_to_hide)
+            if found_el is None:
+                continue
+            self._driver.execute_script(
+                        "arguments[0].style.visibility='hidden'", found_el
+                    )
+
+    def _save_element_example(self, el, color):
+        filename = f"{uuid.uuid4()}"
+        with open(f'{self._dirname}/info.txt', 'a') as f:
+            f.write(f'{filename}.png\n')
+        self._fix_size(el, 320, 200)
+        el.screenshot(f"{self._dirname}/raw/{filename}.png")
+        self._driver.execute_script(
+            f"arguments[0].style.background='green'", el
+        )
+        marker = el.find_element_by_class_name('main-goods__title')
+        self._driver.execute_script(
+                    f"arguments[0].style.background='{color}'", marker
+                )
+        self._clear_example_element(el, ['main-goods__picture', 'main-goods__price'])
+        el.screenshot(f"{self._dirname}/marked/{filename}.png")
+
+
+    def run(self, box_selector, html_mark_selector, color="red"):
         """ Start crawler page and mark elements by `html_mark_selector`"""
         self._destroy_trash()
         self._hide_trash()
-        with self._save_example():
-            self._mark_class_element(html_mark_selector, color)
-
+        for found_element in self._driver.find_elements_by_class_name(box_selector):
+            self._save_element_example(found_element, color)
 
 def crawl(driver, page_data):
     """ Crawl using driver and page data. """
@@ -84,14 +121,14 @@ def crawl(driver, page_data):
     crawler = ScreenCrawler(
         driver, "dataset", page_data.destroy_classes, page_data.hide_classes
     )
-    crawler.run(page_data.mark_class)
+    crawler.run('main-goods__cell', 'main-goods__title')
 
 
 def run():
     """ Main method for running screen_maker module """
     driver = init_driver()
     try:
-        data = load_data("tools/urls.data")
+        data = load_data("screen_marker/urls.data")
         for page_data in data:
             crawl(driver, page_data)
     except Exception as ex:

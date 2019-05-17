@@ -1,6 +1,1 @@
-{"url": "https://rozetka.com.ua", "mark_class":"main-goods__tile", "destroy_classes": ["common-slider", "menu-wrapper"], "hide_classes": ["exponea-popup-banner"] }
-{"url": "https://rozetka.com.ua/kompyuternye-stoly/c155285/", "mark_class":"g-i-tile-i-box-desc", "destroy_classes": ["border-right", "adjacent-wrap"], "hide_classes": ["exponea-popup-banner"] }
-{"url": "https://rozetka.com.ua/notebooks/c80004/filter/preset=tonkie-i-legkie/", "mark_class":"g-i-tile-i-box-desc", "destroy_classes": ["border-right", "adjacent-wrap"], "hide_classes": ["exponea-popup-banner"] }
-{"url": "https://rozetka.com.ua/tablets/c130309/filter/preset=128/", "mark_class":"g-i-tile-i-box-desc", "destroy_classes": ["border-right", "adjacent-wrap"], "hide_classes": ["exponea-popup-banner"] }
-{"url": "https://hard.rozetka.com.ua/computers/c80095/filter/preset=initial/", "mark_class":"g-i-tile-i-box-desc", "destroy_classes": ["border-right", "adjacent-wrap"], "hide_classes": ["exponea-popup-banner"] }
-{"url": "https://rozetka.com.ua/kraski-dlia-volos/c3565580/", "mark_class":"g-i-tile-i-box-desc", "destroy_classes": ["border-right", "adjacent-wrap"], "hide_classes": ["exponea-popup-banner"] }
+{"url": "https://rozetka.com.ua", "mark_class":"main-goods__tile", "destroy_classes": ["common-slider", "menu-wrapper"], "hide_classes": ["exponea-popup-banner", "main-goods__old-price"] }
