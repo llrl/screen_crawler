@@ -104,7 +104,30 @@ class ScreenCrawler:
         self._driver.execute_script(
                     f"arguments[0].style.background='{color}'", marker
                 )
-        self._clear_example_element(el, ['main-goods__picture', 'main-goods__price'])
+        self._driver.execute_script(
+                    f"arguments[0].style.color='{color}'", marker
+                )
+
+        red_price = el.find_element_by_class_name('main-goods__price')
+        self._driver.execute_script(
+                    f"arguments[0].style.background='darkseagreen'", red_price
+                )
+
+        red_price_color = el.find_element_by_class_name('main-goods__price')
+        self._driver.execute_script(
+                    f"arguments[0].style.color='darkseagreen'", red_price_color
+                )
+    
+        pic = el.find_element_by_tag_name('img')
+        self._driver.execute_script(
+                    f"arguments[0].style.opacity='0'", pic
+                )
+        
+        pic_d = el.find_element_by_class_name('main-goods__picture')
+        self._driver.execute_script(
+                    f"arguments[0].style.background='blue'", pic_d
+                )
+
         el.screenshot(f"{self._dirname}/marked/{filename}.png")
 
 
@@ -112,6 +135,10 @@ class ScreenCrawler:
         """ Start crawler page and mark elements by `html_mark_selector`"""
         self._destroy_trash()
         self._hide_trash()
+        red_price = self._driver.find_element_by_class_name('main-goods__price_color_red')
+        self._driver.execute_script(
+            f"arguments[0].style.color='darkseagreen'", red_price
+        )
         for found_element in self._driver.find_elements_by_class_name(box_selector):
             self._save_element_example(found_element, color)
 
